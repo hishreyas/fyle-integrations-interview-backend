@@ -166,7 +166,7 @@ def test_grade_assignment_teacher_2(api_client, teacher_2):
         content_type='application/json'
     )
 
-    assert response.status_code == 200
+    assert response.status_code == 400
 
     assignment = response.json()
 
@@ -176,3 +176,16 @@ def test_grade_assignment_teacher_2(api_client, teacher_2):
     assert assignment['teacher'] == 2
     assert assignment['grade'] == grade
     assert assignment['id'] is not None
+
+@pytest.mark.django_db()
+def test_not_given_princple(api_client):
+    grade = 'A'
+    response = api_client.patch(
+        reverse('teachers-assignments'),
+        data=json.dumps({
+            'id': 3,
+            'grade': grade
+        }),
+        HTTP_X_Principal={},
+        content_type='application/json'
+    )

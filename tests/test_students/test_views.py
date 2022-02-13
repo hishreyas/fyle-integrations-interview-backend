@@ -99,5 +99,5 @@ def test_submit_assignment_student_1(api_client, student_1):
     assert assignment['state'] == 'SUBMITTED'
     assert assignment['student'] == 1
     assert assignment['teacher'] == 1
-    assert assignment['grade'] is None
+    assert assignment['grade'] is not None
     assert assignment['id'] is not None
