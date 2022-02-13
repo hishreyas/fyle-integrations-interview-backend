@@ -101,3 +101,27 @@ def test_submit_assignment_student_1(api_client, student_1):
     assert assignment['teacher'] == 1
     assert assignment['grade'] is not None
     assert assignment['id'] is not None
+
+@pytest.mark.django_db()
+def test_submit_assignment_student_1(api_client, student_1):
+    response = api_client.patch(
+        reverse('students-assignments'),
+        data=json.dumps({
+            'id': 2,
+            'state': 'SUBMITTED',
+            'teacher_id': 1
+        }),
+        HTTP_X_Principal=student_1,
+        content_type='application/json'
+    )
+
+    assert response.status_code == 200
+
+    assignment = response.json()
+
+    assert assignment['content'] is not None
+    assert assignment['state'] == 'SUBMITTED'
+    assert assignment['student'] == 1
+    assert assignment['teacher'] == 1
+    assert assignment['grade'] is not None
+    assert assignment['id'] is not None

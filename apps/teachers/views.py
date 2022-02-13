@@ -30,7 +30,7 @@ class AssignmentsView(generics.ListCreateAPIView):
             request.data['state'] = assignment.state
         except Assignment.DoesNotExist:
             return Response(
-                data={'non_field_errors': 'Teacher cannot grade for other teacher''s assignment'},
+                data={'non_field_errors': 'Teacher cannot grade for other teacher assignment'},
                 status=status.HTTP_400_BAD_REQUEST
             )
             
