@@ -16,9 +16,6 @@ class TeacherAssignmentSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         if 'content' in attrs and attrs['content']:
             raise ValidationError({'non_field_errors':'Teacher cannot change the content of the assignment'})
-
-        if 'student' in attrs and attrs['student']:
-            raise ValidationError({'non_field_errors':'Teacher cannot change the student who submitted the assignment'})    
         
         if attrs['grade'] not in dict(GRADE_CHOICES):
               raise ValidationError(attrs['grade'] +' is not a valid choice.')

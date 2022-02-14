@@ -4,7 +4,6 @@ import json
 from django.urls import reverse
 import pytest
 
-
 @pytest.mark.django_db()
 def test_get_assignments_teacher_1(api_client, teacher_1):
     response = api_client.get(
@@ -117,14 +116,14 @@ def test_change_of_content_teacher_1(api_client, teacher_2):
 
 
 @pytest.mark.django_db()
-def test_grade_invalid_state_teacher_2(api_client, teacher_2):
+def test_grade_invalid_state_teacher_1(api_client, teacher_1):
     response = api_client.patch(
         reverse('teachers-assignments'),
         data=json.dumps({
             'id': 2,
             'student': 2
         }),
-        HTTP_X_Principal=teacher_2,
+        HTTP_X_Principal=teacher_1,
         content_type='application/json'
     )
 
@@ -151,11 +150,11 @@ def test_grade_other_teacher_teacher_2(api_client, teacher_2):
 
     error = response.json()
 
-    assert error['non_field_errors'] == 'Teacher cannot grade for other teacher assignment'
+    assert error['non_field_errors'] == ['Teacher cannot grade for other teacher''s assignment']
 
 
 @pytest.mark.django_db()
-def test_grade_assignment_teacher_1(api_client, teacher_1):
+def test_grade_assignment_teacher_2(api_client, teacher_2):
     grade = 'A'
     response = api_client.patch(
         reverse('teachers-assignments'),
@@ -163,11 +162,17 @@ def test_grade_assignment_teacher_1(api_client, teacher_1):
             'id': 3,
             'grade': grade
         }),
-        HTTP_X_Principal=teacher_1,
+        HTTP_X_Principal=teacher_2,
         content_type='application/json'
     )
 
-    assert response.status_code == 400
-    
-    error = response.json()
-    assert error['non_field_errors'] == 'Teacher cannot grade for other teacher assignment'
+    assert response.status_code == 200
+
+    assignment = response.json()
+
+    assert assignment['content'] is not None
+    assert assignment['state'] == 'GRADED'
+    assert assignment['student'] == 1
+    assert assignment['teacher'] == 2
+    assert assignment['grade'] == grade
+    assert assignment['id'] is not None
